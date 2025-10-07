@@ -1,4 +1,6 @@
 import java.io.*;
+import java.util.List;
+import java.util.ArrayList;
 
 /**
  * This is the provided NumberTriangle class to be used in this coding task.
@@ -88,8 +90,26 @@ public class NumberTriangle {
      *
      */
     public int retrieve(String path) {
-        // TODO implement this method
-        return -1;
+        if (path.isEmpty()) {
+            return this.root;
+        }
+
+        char first = path.charAt(0);
+
+        String rest = path.substring(1);
+
+        if (first == 'l' && this.left != null) {
+            return this.left.retrieve(rest);
+        }
+
+        else if (first == 'r' && this.right != null) {
+            return this.right.retrieve(rest);
+        }
+
+        else {
+            System.out.println("Invalid: " + path);
+            return -1;
+        }
     }
 
     /** Read in the NumberTriangle structure from a file.
@@ -110,7 +130,7 @@ public class NumberTriangle {
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
 
 
-        // TODO define any variables that you want to use to store things
+        List<NumberTriangle> previousLine = null;
 
         // will need to return the top of the NumberTriangle,
         // so might want a variable for that.
@@ -122,7 +142,29 @@ public class NumberTriangle {
             // remove when done; this line is included so running starter code prints the contents of the file
             System.out.println(line);
 
-            // TODO process the line
+            String cleanLine = line.trim();
+            if (!cleanLine.isEmpty()) {
+                String[] split = cleanLine.split("\\s+");
+                List<NumberTriangle> currentLine = new ArrayList<>(split.length);
+                for (int i = 0; i < split.length; i++) {
+                    int value =  Integer.parseInt(split[i]);
+                    currentLine.add(new NumberTriangle(value));
+                }
+
+                if (top == null) {
+                    top = currentLine.get(0);
+                }
+
+                if (previousLine != null) {
+                    for (int i = 0; i < previousLine.size(); i++) {
+                        NumberTriangle parent = previousLine.get(i);
+                        parent.setLeft(currentLine.get(i));
+                        parent.setRight(currentLine.get(i + 1));
+                    }
+                }
+
+                previousLine = currentLine;
+            }
 
             //read the next line
             line = br.readLine();
@@ -140,5 +182,11 @@ public class NumberTriangle {
         // Problem 18 from project Euler [not for credit]
         mt.maxSumPath();
         System.out.println(mt.getRoot());
+        System.out.println(mt.retrieve(""));
+        System.out.println(mt.retrieve("l"));
+        System.out.println(mt.retrieve("r"));
+        System.out.println(mt.retrieve("ll"));
+        System.out.println(mt.retrieve("lr"));
+
     }
 }
