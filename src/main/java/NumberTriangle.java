@@ -90,8 +90,26 @@ public class NumberTriangle {
      *
      */
     public int retrieve(String path) {
-        // TODO implement this method
-        return -1;
+        if (path.isEmpty()) {
+            return this.root;
+        }
+
+        char first = path.charAt(0);
+
+        String rest = path.substring(1);
+
+        if (first == 'l' && this.left != null) {
+            return this.left.retrieve(rest);
+        }
+
+        else if (first == 'r' && this.right != null) {
+            return this.right.retrieve(rest);
+        }
+
+        else {
+            System.out.println("Invalid: " + path);
+            return -1;
+        }
     }
 
     /** Read in the NumberTriangle structure from a file.
@@ -164,5 +182,11 @@ public class NumberTriangle {
         // Problem 18 from project Euler [not for credit]
         mt.maxSumPath();
         System.out.println(mt.getRoot());
+        System.out.println(mt.retrieve(""));
+        System.out.println(mt.retrieve("l"));
+        System.out.println(mt.retrieve("r"));
+        System.out.println(mt.retrieve("ll"));
+        System.out.println(mt.retrieve("lr"));
+
     }
 }
